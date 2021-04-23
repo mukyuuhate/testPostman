@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+</head>
+<body>
+
+<h1>---登录---</h1>
+
+<hr width="80%">
+
+<form action="/app01/login/" method="post">
+
+    {% csrf_token %}
+
+    账号:<input type="text" name="account" value="{{ account }}">
+    <br>
+    密码:<input type="password" name="password">
+    <br>
+    <br>
+    <button type="submit">立即登录</button>
+
+</form>
+
+<label style="color: brown">{{ msg }}</label>
+
+</body>
+</html>
