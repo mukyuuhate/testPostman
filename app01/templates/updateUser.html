@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<h1>更新账号信息</h1>
+
+<hr width="80%">
+
+<form action="/app01/updateUser/" method="post">
+    {% csrf_token %}
+
+    <p>
+        账号编号:
+        <input type="text" value="{{ user.userno }}" disabled>
+    </p>
+
+    {# 设置隐藏的部门编号, 用于向后台传递 #}
+    <input type="hidden" name="userno" value="{{ user.userno }}">
+
+    <p>
+        账号:
+        <input type="text" name="uaccount" value="{{ user.uaccount }}">
+    </p>
+
+    <p>
+        密码:
+        <input type="text" name="upassword" value="{{ user.upassword }}">
+    </p>
+
+    <button type="submit">更新</button>
+
+</form>
+
+</body>
+</html>

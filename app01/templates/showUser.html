@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <script type="text/javascript">
+        // 更新的函数
+        function preUpdateUser(userno){
+            // 发送更新数据前的查询请求
+            window.location = "/app01/preUpdateUserById/" + userno;
+        }
+
+        // 删除的函数
+        function preDeleteUser(userno){
+            // 确认框
+            if(confirm("确定要删除该账号吗?")){
+                // 删除
+                url = "/app01/deleteUser/" + userno;
+
+                window.location = url;
+            }
+        }
+
+        $.ajax({
+            url: '/app01/preUpdateUserById/' + userno,
+            type: 'PUT',
+            dataType: 'json',
+            data: {
+                's': $("#select-id").find("option:selected").text()
+            },
+            success: function (data) {
+                console.log('ok');
+            }
+        })
+
+        $.ajax({
+            url: '/app01/deleteUser/' + userno,
+            type: 'DELETE',
+            dataType: 'json',
+            data: {
+                's': $("#select-id").find("option:selected").text()
+            },
+            success: function (data) {
+                console.log('ok');
+            }
+        })
+
+    </script>
+</head>
+<body>
+
+<h1>账号信息</h1>
+
+<hr width="80%">
+
+<table border="1" width="600" cellspacing="0">
+    <thead>
+        <tr>
+            <th>账号</th>
+            <th>密码</th>
+            <th>相关操作</th>
+        </tr>
+    </thead>
+
+    <tbody>
+    {% for user in userList %}
+        <tr>
+            <td>{{ user.uaccount }}</td>
+            <td>{{ user.upassword }}</td>
+            <td>
+                <button id="btnUpdate" onclick="preUpdateUser({{ user.userno }})">更新</button>
+                <button id="btnDelete" onclick="preDeleteUser({{ user.userno }})">删除</button>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+
+    <a href="/app01/addUser/">添加新账号</a>
+
+</table>
+</body>
+</html>
