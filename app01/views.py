@@ -1,6 +1,6 @@
 import json
 
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, QueryDict
 from django.shortcuts import render, redirect
 
 from app01.models import User
@@ -98,6 +98,8 @@ def login(request):
                     "password": password,
                 }
                 return JsonResponse(result)
+        else:
+            return render(request, 'login.html')
 
 
 # 安全退出的功能
@@ -116,13 +118,20 @@ def addUser(request):
             result = {
                 "msg": '账号已存在',
             }
-            return JsonResponse(result)
-            # return render(request, 'addUser.html', {'msg': '账号已存在'})
+            # return JsonResponse(result)
+            return render(request, 'addUser.html', {'msg': '账号已存在'})
         else:
             # 添加到数据库
             User.objects.create(uaccount=uaccount, upassword=upassword)
 
-            return showUser(request)
+            result = {
+                "msg": 'post接口响应成功\n成功创建新账号：',
+                "account": uaccount,
+                "password": upassword,
+            }
+            return JsonResponse(result)
+
+            # return showUser(request)
     else:
         return render(request, 'addUser.html')
 
@@ -131,6 +140,39 @@ def addUser(request):
 def deleteUser(request, id):
     User.objects.filter(userno=id).delete()
     return redirect('/app01/showUser')
+
+
+def delete(request):
+    if request.method == 'DELETE':
+        # 接收数据
+        userno = request.DELETE.get('userno', None)
+        return JsonResponse({'userno': userno, 'msg': 'success'}, safe=False)
+    # DELETE = QueryDict(request.DELETE)
+    # userno = DELETE.get('userno')
+    # print(id)
+    # return JsonResponse({'userno': userno, 'msg': 'success'}, safe=False)
+
+def ajax_delete(request):
+    userno = request.DELETE.get("userno")
+    u = User.objects.get(userno=userno)
+
+    User.objects.filter(userno=userno).delete()
+    userList = User.objects.all()
+
+    # 把数据集合响应到前端
+    context = dict()
+    context['userList'] = userList
+
+    result = {
+        "msg": 'delete接口响应成功，被删除账号：',
+        "userno": userno,
+        "account": u.uaccount,
+        "password": u.upassword,
+    }
+    return JsonResponse(result)
+
+    # return render(request, 'index.html')
+
 
 
 # 查询所有账号信息
@@ -169,3 +211,40 @@ def updateUser(request):
 
         return showUser(request)
 
+def ajax_put(request):
+    userno = request.PUT.get("userno")
+    account = request.PUT.get("uaccount")
+    password = request.PUT.get("upassword")
+
+    # 更新到数据库
+    User.objects.filter(userno=userno).update(uaccount=account, upassword=password)
+    userList = User.objects.all()
+
+    # 把数据集合响应到前端
+    context = dict()
+    context['userList'] = userList
+
+    result = {
+        "msg": 'update接口响应成功，更新后账号信息：',
+        "userno": userno,
+        "account": account,
+        "password": password,
+    }
+    return JsonResponse(result)
+    # return showUser(request)
+    # return render(request, 'index.html')
+
+# 准备更新部门信息
+def findUser(request):
+    account = request.GET.get('account')
+
+    if account:
+        # 登录成功
+        user = User.objects.get(uaccount=account)
+        result = {
+            "msg": 'get接口响应成功\n搜索结果如下!',
+            "userno": user.userno,
+            "account": account,
+            "password": user.upassword,
+        }
+        return JsonResponse(result)

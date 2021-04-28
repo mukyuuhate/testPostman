@@ -1,47 +1,31 @@
-import json
+#!/usr/bin/env python
+# -*- coding:utf8 -*-
+# __author__ = '北方姆Q'
 
-from django.utils.deprecation import MiddlewareMixin
-from django.http.multipartparser import MultiPartParser
+from django.http import QueryDict
+try:
+    from django.utils.deprecation import MiddlewareMixin    # 1.10.x
+except ImportError:
+    MiddlewareMixin = object                                # 1.4.x-1.9.x
 
-from .util import params_error
 
-
-class MethodConvertMiddleware(MiddlewareMixin):
-    '''
-    自定义method方法
-    '''
-
+class HttpPost2HttpOtherMiddleware(MiddlewareMixin):
     def process_request(self, request):
-        method = request.method
-        '''
-        判断数据类型，对数据进行封装
-        '''
-        # 判断是否为ajax提交方式
-        if 'application/json' in request.META['CONTENT_TYPE']:
-            try:
-                data = json.loads(request.body.decode())
-                files = None
-            except Exception as e:
-                return params_error({
-                    'msg': '请求数据格式错误'
-                })
-        # 判断是否为form提交方式
-        elif 'multipart/form-data' in request.META['CONTENT_TYPE']:
-            data, files = MultiPartParser(
-                request, request.META, request.META.upload_handlers
-            ).parse()
-        # 否则为get提交方式
-        else:
-            data = request.GET
-            files = None
-        # 判断前端传来的headers中是否含自定义字段
-        if 'HTTP_X_METHOD' in request.META:
-            # 对ajax传入的方法进行字母格式控制
-            method = request.META['HTTP_X_META'].upper()
-            # 给request对象赋于method属性
-            setattr(request, 'method', method)
-        # 判断是否有文件上传
-        if files:
-            setattr(request, '{method}_FILES'.format(method=method), files)
-        # 将data数据添加到method中
-        setattr(request, method, data)
+        """
+        可以继续添加HEAD、PATCH、OPTIONS以及自定义方法
+        HTTP_X_METHODOVERRIDE貌似是以前版本的key？？？
+        :param request: 经过原生中间件处理过后的请求
+        :return:
+        """
+        try:
+            http_method = request.META['REQUEST_METHOD']
+            if http_method.upper() not in ('GET', 'POST'):
+                setattr(request, http_method.upper(), QueryDict(request.body))
+        # except KeyError:
+        #     http_method = request.META['HTTP_X_METHODOVERRIDE']
+        #     if http_method.upper() not in ('GET', 'POST'):
+        #         setattr(request, http_method.upper(), QueryDict(request.body))
+        except Exception:
+            pass
+        finally:
+            return None

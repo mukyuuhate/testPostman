@@ -48,7 +48,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'app01.middle.MethodConvertMiddleware',
+    'app01.middle.HttpPost2HttpOtherMiddleware',
 ]
 
 ROOT_URLCONF = 'testPostman.urls'

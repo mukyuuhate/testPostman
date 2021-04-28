@@ -33,5 +33,11 @@ urlpatterns = [
     path('app01/preUpdateUserById/<int:id>', vs.preUpdateUserById),
     path('app01/updateUser/', vs.updateUser),
 
+    path('app01/testDelete/', vs.delete),
+
+    path('app01/ajax_delete/', vs.ajax_delete),
+    path('app01/ajax_put/', vs.ajax_put),
+
+    path('app01/findUser/', vs.findUser),
 ]
 

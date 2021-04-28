@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+        <title>Title</title>
+
+</head>
+
+<body>
+
+<h1>测试ajax</h1>
+
+    <ul>
+        <input type="text" id="i1" >+<input type="text" id="i2" >=<input type="text" id="i3">
+        <button type="submit" id="b1">点我点我</button>
+    </ul>
+
+<label style="color: brown">{{ msg }}</label>
+
+</body>
+</html>
+
+<script type="text/javascript">
+    $(function() {
+        $('#b1').click(function () {
+            $.ajax({
+                async: false,
+                url: '/app01/testDelete/',
+                type: 'post',
+                dataType: 'json',
+                data: {'i1': $('#i1').val(), 'i2': $('#i2').val()},
+                success: function (data) {
+
+                    $('#i3').val(data)
+
+                }
+            });
+        });
+    });
+
+    </script>

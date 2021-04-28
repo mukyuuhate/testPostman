@@ -10,30 +10,63 @@
 
 <hr width="80%">
 
-<form action="/app01/updateUser/" method="post">
-    {% csrf_token %}
+<p>
+    账号编号:
+    <input type="text" value="{{ user.userno }}" disabled>
+</p>
 
-    <p>
-        账号编号:
-        <input type="text" value="{{ user.userno }}" disabled>
-    </p>
+{# 设置隐藏的部门编号, 用于向后台传递 #}
+<input id="userno" type="hidden" name="userno" value="{{ user.userno }}">
 
-    {# 设置隐藏的部门编号, 用于向后台传递 #}
-    <input type="hidden" name="userno" value="{{ user.userno }}">
+<p>
+    账号:
+    <input id="uaccount" type="text" name="uaccount" value="{{ user.uaccount }}">
+</p>
 
-    <p>
-        账号:
-        <input type="text" name="uaccount" value="{{ user.uaccount }}">
-    </p>
+<p>
+    密码:
+    <input id="upassword" type="text" name="upassword" value="{{ user.upassword }}">
+</p>
 
-    <p>
-        密码:
-        <input type="text" name="upassword" value="{{ user.upassword }}">
-    </p>
+<button id="update" type="submit">更新</button>
 
-    <button type="submit">更新</button>
-
-</form>
 
 </body>
+
+<script src="https://s3.pstatp.com/cdn/expire-1-M/jquery/3.3.1/jquery.min.js"></script>
+<script>
+    {#// 更新的函数#}
+    {#function preUpdateUser(userno){#}
+    {#    // 发送更新数据前的查询请求#}
+    {#    window.location = "/app01/preUpdateUserById/" + userno;#}
+    {# }#}
+    {##}
+    {#// 删除的函数#}
+    {#function preDeleteUser(userno){#}
+    {#    // 确认框#}
+    {#    if(confirm("确定要删除该账号吗?")){#}
+    {#        // 删除#}
+    {#        url = "/app01/deleteUser/" + userno;#}
+    {##}
+    {#        window.location = url;#}
+    {#    }#}
+    {# }#}
+
+    $("#update").on("click", function () {
+        $.ajax({
+            url: "/app01/ajax_put/",
+            type: "put",
+            data: {
+                "userno": $("#userno").val(),
+                "uaccount": $("#uaccount").val(),
+                "upassword": $("#upassword").val(),
+            },
+            success: function (data) {
+            }
+        })
+    });
+
+
+</script>
+
 </html>
